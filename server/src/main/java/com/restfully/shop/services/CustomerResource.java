@@ -36,6 +36,6 @@ public interface CustomerResource {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_XML)
     public void updateCustomer(@PathParam("id") int id, InputStream is);
-    
+
     
 }
