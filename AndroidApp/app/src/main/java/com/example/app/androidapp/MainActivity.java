@@ -1,5 +1,6 @@
 package com.example.app.androidapp;
 
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -32,9 +33,12 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+    private SensorManager sensor_manager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sensor_manager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
         setContentView(R.layout.activity_main);
 
         mTextMessage = (TextView) findViewById(R.id.message);
