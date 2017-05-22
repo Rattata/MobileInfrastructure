@@ -34,11 +34,21 @@ public class CustomerResourceService implements CustomerResource {
     private Map<Integer, Customer> customerDB = new ConcurrentHashMap<Integer, Customer>();
     private AtomicInteger idCounter = new AtomicInteger();
 
+    
     /**
      * Creates a new instance of CustomerResource
      */
     public CustomerResourceService() {
-        
+        Customer customer = new Customer();
+        customer.setCity("Amsterdam");
+        customer.setCountry("Netherlands");
+        customer.setFirstName("Sieger");
+        customer.setId(1);
+        customer.setLastName("Falkena");
+        customer.setState("Noord-Holland");
+        customer.setStreet("Harkstraat");
+        customer.setZip("1112XC");
+        customerDB.put(1, customer);
     }
 
     /**
