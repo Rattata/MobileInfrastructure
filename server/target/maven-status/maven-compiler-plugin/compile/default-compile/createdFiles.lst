@@ -1,4 +1,4 @@
-com/restfully/shop/services/ApplicationConfig.class
-com/restfully/shop/services/CustomerResource.class
-com/restfully/shop/services/CustomerResourceService$1.class
-com/restfully/shop/services/CustomerResourceService.class
+com\restfully\shop\services\ApplicationConfig.class
+com\restfully\shop\services\CustomerResourceService$1.class
+com\restfully\shop\services\CustomerResource.class
+com\restfully\shop\services\CustomerResourceService.class

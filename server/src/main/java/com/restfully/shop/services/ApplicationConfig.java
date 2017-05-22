@@ -5,6 +5,7 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
+import java.io.Console;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -25,18 +26,20 @@ public class ApplicationConfig extends Application {
         try {
             
         // this uses h2 by default but change to match your database
-        String databaseUrl = "jdbc:mysql://localhost/restful";
+        String databaseUrl = "jdbc:mysql://localhost:3306/restful";
         // create a connection source to our database
         ConnectionSource connectionSource =
             new JdbcConnectionSource(databaseUrl, "root", "root");
 
+        
+        // if you need to create the 'accounts' table make this call
+            TableUtils.createTableIfNotExists(connectionSource, Account.class);
+        
+        
         // instantiate the dao
             Dao<Account, String> accountDao =
             DaoManager.createDao(connectionSource, Account.class);
 
-        // if you need to create the 'accounts' table make this call
-            TableUtils.createTableIfNotExists(connectionSource, Account.class);
-        
  	
         // create an instance of Account
         Account account = new Account();
@@ -53,6 +56,7 @@ public class ApplicationConfig extends Application {
         connectionSource.close();
         } catch (Exception e) {
             Logger.getAnonymousLogger().severe("Error creating DAO");
+            
         }
     }
     
