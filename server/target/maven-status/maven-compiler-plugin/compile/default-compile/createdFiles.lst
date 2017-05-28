@@ -1,4 +1,11 @@
 com\restfully\shop\services\ApplicationConfig.class
+com\restfully\shop\services\Account.class
+com\restfully\shop\domain\Customer.class
+com\restfully\shop\services\AccountResourceService.class
+com\restfully\shop\services\ApplicationBinder.class
 com\restfully\shop\services\CustomerResourceService$1.class
 com\restfully\shop\services\CustomerResource.class
+com\restfully\shop\services\RootResource.class
+com\restfully\shop\services\AccountResource.class
+com\restfully\shop\services\CustomerResourceService$2.class
 com\restfully\shop\services\CustomerResourceService.class

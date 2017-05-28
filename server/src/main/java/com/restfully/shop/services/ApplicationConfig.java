@@ -9,6 +9,8 @@ import java.io.Console;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import javax.enterprise.inject.Default;
+import javax.enterprise.inject.Produces;
 import javax.ws.rs.core.Application;
 
 /**
@@ -20,9 +22,10 @@ public class ApplicationConfig extends Application {
     
     private Set<Object> singletons = new HashSet<Object>();
     private Set<Class<?>> resources = new java.util.HashSet<>();
-
+    private static ConnectionSource _source;
     public ApplicationConfig() {
         singletons.add(new CustomerResourceService());
+        
         try {
             
         // this uses h2 by default but change to match your database
@@ -30,11 +33,11 @@ public class ApplicationConfig extends Application {
         // create a connection source to our database
         ConnectionSource connectionSource =
             new JdbcConnectionSource(databaseUrl, "root", "root");
-
+        _source = new JdbcConnectionSource(databaseUrl, "root", "root");
+        singletons.add(connectionSource);
         
         // if you need to create the 'accounts' table make this call
             TableUtils.createTableIfNotExists(connectionSource, Account.class);
-        
         
         // instantiate the dao
             Dao<Account, String> accountDao =
@@ -66,6 +69,18 @@ public class ApplicationConfig extends Application {
         return resources;
     }
     
+    @Produces
+    public  Dao<Account, String> GetAccountDao (){
+        Dao dao = null;
+        try {
+            dao = DaoManager.createDao(_source, Account.class);
+        } catch (Exception e) {
+            Logger.getAnonymousLogger().severe("Error creating DAO");
+        } 
+        return dao;
+    }
+    
+    
     @Override
     public Set<Object> getSingletons() {
         return singletons;
@@ -78,6 +93,10 @@ public class ApplicationConfig extends Application {
      * If required, comment out calling this method in getClasses().
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
+        resources.add(com.restfully.shop.services.RootResource.class);
     }
     
+    
+    
 }
+
