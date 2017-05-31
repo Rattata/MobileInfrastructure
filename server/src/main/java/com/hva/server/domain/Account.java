@@ -16,7 +16,7 @@ import java.util.Date;
 @DatabaseTable()
 public class Account {
         
-    @DatabaseField(generatedId = false, id = true, width = 500)
+    @DatabaseField(width = 500)
     public String code;
         
     @DatabaseField
@@ -28,11 +28,15 @@ public class Account {
     @DatabaseField
     public Date access_token_expires;
     
-    @DatabaseField
+    @DatabaseField()
     public String email;
     
-     @DatabaseField
+    @DatabaseField
     public String state;
+     
+    @DatabaseField(generatedId = true)
+    public int ID;
+        
     
     
     

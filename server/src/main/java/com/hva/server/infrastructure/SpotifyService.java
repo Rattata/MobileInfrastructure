@@ -6,6 +6,7 @@
 package com.hva.server.infrastructure;
 
 import com.google.common.util.concurrent.SettableFuture;
+import com.google.gson.Gson;
 import com.hva.server.domain.Account;
 import com.hva.server.domain.AccountCodeExpiredException;
 import com.hva.server.domain.AccountRepository;
@@ -31,6 +32,7 @@ public class SpotifyService {
 
     private AccountRepository _accountRepo;
     private Api api;
+    private Gson gson = new Gson();
 
     @Inject
     public SpotifyService(AccountRepository accountRepository) {
@@ -105,7 +107,8 @@ public class SpotifyService {
         }
 
         try {
-            account.email = api.getMe().build().get().getEmail();
+            Logger.getAnonymousLogger().info(gson.toJson(account));
+            Logger.getAnonymousLogger().info(gson.toJson(api));
             _accountRepo.CreateOrUpdate(account);
         } catch (Exception e) {
             Logger.getLogger(e.getMessage());
