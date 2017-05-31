@@ -1,24 +1,13 @@
 package com.hva.server;
 
-import com.hva.server.infrastructure.ConnectionFactory;
 import com.hva.server.infrastructure.ResourceBinder;
-import com.hva.server.infrastructure.SpotifyServiceFactory;
-import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
 
-import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.hk2.api.ServiceLocatorFactory;
-
-import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.logging.Logger;
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
 
 /**
  * Main class.
@@ -45,7 +34,6 @@ public class Main {
 
     public static ResourceConfig GetResourceConfig() {
         return new ResourceConfig()
-                .register(new ConnectionFactory())
                 .register(new ResourceBinder())
                 .packages("com.hva.server")
                 .packages("com.hva.server.resources");

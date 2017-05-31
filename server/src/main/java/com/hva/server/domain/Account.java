@@ -7,6 +7,7 @@ package com.hva.server.domain;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+import java.util.Date;
 
 /**
  *
@@ -14,11 +15,8 @@ import com.j256.ormlite.table.DatabaseTable;
  */
 @DatabaseTable()
 public class Account {
-    
-    @DatabaseField(generatedId = false, id = true)
-    public String client_ID;
         
-    @DatabaseField
+    @DatabaseField(generatedId = false, id = true, width = 500)
     public String code;
         
     @DatabaseField
@@ -28,7 +26,14 @@ public class Account {
     public String refresh_token;
     
     @DatabaseField
-    public String access_token_expires;
+    public Date access_token_expires;
+    
+    @DatabaseField
+    public String email;
+    
+     @DatabaseField
+    public String state;
+    
     
     
     
