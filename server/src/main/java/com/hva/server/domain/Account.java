@@ -15,10 +15,21 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable()
 public class Account {
     
-    @DatabaseField(generatedId = true)
-    public int ID;
+    @DatabaseField(generatedId = false, id = true)
+    public String client_ID;
+        
+    @DatabaseField
+    public String code;
+        
+    @DatabaseField
+    public String access_token;
     
     @DatabaseField
-    public String name;
+    public String refresh_token;
+    
+    @DatabaseField
+    public String access_token_expires;
+    
+    
     
 }

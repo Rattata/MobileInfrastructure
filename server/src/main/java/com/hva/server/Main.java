@@ -1,6 +1,8 @@
 package com.hva.server;
 
 import com.hva.server.infrastructure.ConnectionFactory;
+import com.hva.server.infrastructure.ResourceBinder;
+import com.hva.server.infrastructure.SpotifyServiceFactory;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.support.ConnectionSource;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -34,17 +36,19 @@ public class Main {
      * @return Grizzly HTTP server.
      */
     public static HttpServer startServer() {
-        final ResourceConfig rc = configResources();
+        final ResourceConfig rc = GetResourceConfig();
 
         // create and start a new instance of grizzly http server
         // exposing the Jersey application at BASE_URI
         return GrizzlyHttpServerFactory.createHttpServer(URI.create(BASE_URI), rc);
     }
 
-    public static ResourceConfig configResources() {
+    public static ResourceConfig GetResourceConfig() {
         return new ResourceConfig()
                 .register(new ConnectionFactory())
-                .packages("com.hva.server");
+                .register(new ResourceBinder())
+                .packages("com.hva.server")
+                .packages("com.hva.server.resources");
     }
 
     /**
