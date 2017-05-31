@@ -27,7 +27,7 @@ public class SpotifyService {
 
     private final String ClientId = "97b2e28c509d450ba4be16b6a02c048c";
     private final String ClientSecret = "e34f7b0c3e1d4bf0ae596d7007945e44";
-    private final String callBack = "http://localhost:8080/myapp/spotifycallback";
+    private final String callBack = "http://localhost:8080/myapp/auth/redirect";
 
     private AccountRepository _accountRepo;
     private Api api;
