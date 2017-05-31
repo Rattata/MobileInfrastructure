@@ -1,7 +1,0 @@
-<#if licenseFirst??>
-${licenseFirst}
-</#if>
-${licensePrefix}HvA licences apply
-<#if licenseLast??>
-${licenseLast}
-</#if>
