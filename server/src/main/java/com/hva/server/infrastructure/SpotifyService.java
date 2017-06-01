@@ -96,7 +96,7 @@ public class SpotifyService {
 
         Date now = new Date(Calendar.getInstance().getTimeInMillis());
         if (account.access_token_expires.before(now)) {
-            throw new AccountCodeExpiredException();
+            api.refreshAccessToken();
         } else if (account.access_token_expires.before(Slackydate)) {
             api.refreshAccessToken();
         }
