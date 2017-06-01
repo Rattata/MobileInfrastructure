@@ -28,10 +28,18 @@ public class AccountRepository {
     }
 
     public Account CreateOrUpdate(Account account) throws Exception {
-        ConnectionSource conn = null;
-        conn = _conn.provide();
+        ConnectionSource conn = _conn.provide();
         Dao<Account, Integer> dao = DaoManager.createDao(conn, Account.class);
         dao.createOrUpdate(account);
+        conn.close();
+        return account;
+    }
+    
+    public Account Get(int accountId) throws Exception {
+        Account account = null;
+        ConnectionSource conn = _conn.provide();
+        Dao<Account, Integer> dao = DaoManager.createDao(conn, Account.class);
+        account = dao.queryForId(accountId);
         conn.close();
         return account;
     }

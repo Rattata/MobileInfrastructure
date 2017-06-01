@@ -30,35 +30,30 @@ import javax.ws.rs.core.Response;
 public class AuthResource {
 
     private Gson gson = new Gson();
-    
+
     @Inject
     private SpotifyService _spotify;
-    
+
     @Inject
     private AccountRepository _accountRepo;
-    
+
     @GET
     @Path("/request")
     @Produces(MediaType.APPLICATION_JSON)
     public String authcode(@PathParam("clientcode") String authCode) {
         return gson.toJson(_spotify.GetRequest());
     }
-    
+
     @GET
     @Path("/redirect")
     @Produces(MediaType.APPLICATION_JSON)
     public Response SpotifyRequestCallback(@QueryParam("code") String clientCode, @QueryParam("state") String clientState) {
-        Api api = null;
-        User response = new User();
-        
         try {
             Account account = new Account();
             account.code = clientCode;
             account.state = clientState;
             _accountRepo.CreateOrUpdate(account);
-           api = _spotify.GetAPI(account);
-           response = api.getMe().build().get();
-           
+            return Response.ok(gson.toJson(_spotify.SetTokens(account)), MediaType.APPLICATION_JSON).build();
         } catch (AccountCodeExpiredException e) {
             return Response.status(Response.Status.UNAUTHORIZED).link("/myapp/auth/request", "request").build();
         } catch (Exception e) {
@@ -66,7 +61,5 @@ public class AuthResource {
             e.printStackTrace();
             return Response.serverError().build();
         }
-        
-        return Response.ok(gson.toJson(response), MediaType.APPLICATION_JSON).build();
     }
 }

@@ -9,6 +9,7 @@ package com.hva.server.infrastructure;
  *
  * @author siege
  */
-public class AuthenticationResponse {
+
+public class AuthenticationResponse  {
     public String code;
 }

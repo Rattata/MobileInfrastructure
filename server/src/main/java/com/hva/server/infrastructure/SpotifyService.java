@@ -54,45 +54,40 @@ public class SpotifyService {
         return request;
     }
 
-    private Account SetAuthToken(Account account) {
+    private Account SetAuthToken(Account account) throws Exception {
         AuthorizationCodeCredentials credentials = null;
-        try {
-            credentials = api.authorizationCodeGrant(account.code).build().get();
-            api.setAccessToken(credentials.getAccessToken());
-            api.setRefreshToken(credentials.getRefreshToken());
 
-            account.access_token = credentials.getAccessToken();
-            account.refresh_token = credentials.getRefreshToken();
-            account.access_token_expires = GetExpiryDate(credentials.getExpiresIn());
-            _accountRepo.CreateOrUpdate(account);
-            return account;
-        } catch (Exception e) {
-            Logger.getLogger(e.getMessage());
-            e.getStackTrace();
-            return null;
-        }
+        credentials = api.authorizationCodeGrant(account.code).build().get();
+        api.setAccessToken(credentials.getAccessToken());
+        api.setRefreshToken(credentials.getRefreshToken());
+
+        account.access_token = credentials.getAccessToken();
+        account.refresh_token = credentials.getRefreshToken();
+        account.access_token_expires = GetExpiryDate(credentials.getExpiresIn());
+        _accountRepo.CreateOrUpdate(account);
+        return account;
     }
 
-    public String queryAlbums(Account account, String barcode) {
-        //q=upc:{barcode}&type=album 
-        return "";
+    public String queryAlbums(Account account, String barcode) throws AccountCodeExpiredException, Exception {
+        Account updatedAccount  = SetTokens(account);
+        return api.searchAlbums(barcode).limit(1).build().getJson();
     }
 
     public String addAlbumsToUser(Account account, String barcode) {
         return "";
     }
 
-    public Api GetAPI(Account account) throws AccountCodeExpiredException{
+    public Account SetTokens(Account account) throws AccountCodeExpiredException, Exception {
 
         api.setAccessToken(account.access_token);
         api.setRefreshToken(account.refresh_token);
-
+        Account updatedAccount = account;
         if (account.code == null) {
             Logger.getLogger(SpotifyService.class.getCanonicalName()).severe("account has no code: " + account.email);
         }
 
-        if (account.access_token == null) {
-            SetAuthToken(account);
+        if (account.access_token == null || account.access_token_expires == null) {
+            updatedAccount = SetAuthToken(account);
         }
 
         Calendar date = Calendar.getInstance();
@@ -106,16 +101,7 @@ public class SpotifyService {
             api.refreshAccessToken();
         }
 
-        try {
-            Logger.getAnonymousLogger().info(gson.toJson(account));
-            Logger.getAnonymousLogger().info(gson.toJson(api));
-            _accountRepo.CreateOrUpdate(account);
-        } catch (Exception e) {
-            Logger.getLogger(e.getMessage());
-            e.getStackTrace();
-        }
-
-        return api;
+        return updatedAccount;
     }
 
     private Date GetExpiryDate(int expiresIn) {
