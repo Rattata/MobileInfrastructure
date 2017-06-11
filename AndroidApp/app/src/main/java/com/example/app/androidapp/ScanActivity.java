@@ -9,6 +9,12 @@ import android.support.v4.app.ActivityCompat;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import com.spotify.sdk.android.authentication.*;
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
+import retrofit2.http.*;
+import retrofit2.*;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.CameraSource;
@@ -17,6 +23,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 /**
  * Created by Ryno on 30-5-2017.
@@ -32,9 +39,9 @@ public class ScanActivity extends Activity {
 
         setContentView(R.layout.scan_activity);
         cameraPreview = (SurfaceView) findViewById(R.id.camera_preview);
-
         createCameraSource();
     }
+
 
     private void createCameraSource() {
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build();
@@ -87,6 +94,7 @@ public class ScanActivity extends Activity {
                     Intent intent = new Intent();
                     intent.putExtra("barcode",barcodeSparseArray.valueAt(0));
                     setResult(CommonStatusCodes.SUCCESS, intent);
+
                     finish();
                 }
             }

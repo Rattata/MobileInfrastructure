@@ -7,18 +7,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -28,9 +25,10 @@ public class MainActivity extends AppCompatActivity {
 
     TextView barcodeText;
     Button barcodeButton;
-    CallbackManager callbackManager;
-    LoginButton loginButton;
-    public Retrofit retrofit;
+    Button button;
+//    CallbackManager callbackManager;
+    //LoginButton loginButton;
+    BackendService service = new BackendService();
 
     //private SensorManager sensor_manager;
     @Override
@@ -41,40 +39,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         barcodeText = (TextView)findViewById(R.id.barcode_text);
         barcodeButton = (Button)findViewById(R.id.barcode_button);
+        try {
+            service.AuthenticationService();
+        }catch (IOException except){
+            Log.e("authenticationrequest", "could not reach authenticationservice");
+        }
 
-        retrofit = new Retrofit.Builder()
-                .baseUrl("http://localhost:8080/myapp/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ConnectionApi mApi = retrofit.create(ConnectionApi.class);
-
-        //Call<List<String>> meep = mApi.listData();
-        mApi.sendRequest();
-
-
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        callbackManager = CallbackManager.Factory.create();
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-
-        LoginManager.getInstance().registerCallback(callbackManager,
-                new FacebookCallback<LoginResult>() {
-                    @Override
-                    public void onSuccess(LoginResult loginResult) {
-                        Log.d("Debug", "login success");
-                        barcodeText.setText("Login succes\n"+loginResult.getAccessToken().getToken());
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        //barcodeText.setText("Login cancel");
-                    }
-
-                    @Override
-                    public void onError(FacebookException exception) {
-                        //barcodeText.setText(exception.getMessage());
-                    }
-                });
+        //FacebookSdk.sdkInitialize(getApplicationContext());
+        //callbackManager = CallbackManager.Factory.create();
+//        loginButton = (LoginButton) findViewById(R.id.login_button);
+//
+//        LoginManager.getInstance().registerCallback(callbackManager,
+//                new FacebookCallback<LoginResult>() {
+//                    @Override
+//                    public void onSuccess(LoginResult loginResult) {
+//                        Log.d("Debug", "login success");
+//                        barcodeText.setText("Login succes\n"+loginResult.getAccessToken().getToken());
+//                    }
+//
+//                    @Override
+//                    public void onCancel() {
+//                        //barcodeText.setText("Login cancel");
+//                    }
+//
+//                    @Override
+//                    public void onError(FacebookException exception) {
+//                        //barcodeText.setText(exception.getMessage());
+//                    }
+//                });
+//
     }
 
     public void scanBarcodeClick(View view){
@@ -82,10 +75,25 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent,0);
     }
 
+    public void SpotifyLogin(View view){
+
+//        if(userId == 0){return;}
+        BackendService.AuthenticationRequest authrequest = BackendService.requestData;
+        if(authrequest == null){return;}
+        final AuthenticationRequest request = new AuthenticationRequest.Builder(authrequest.client_id, AuthenticationResponse.Type.TOKEN, authrequest.redirect_uri)
+                .setScopes(new String[]{authrequest.scope})
+                .build();
+
+        AuthenticationClient.openLoginActivity(this, 1337, request);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        //callbackManager.onActivityResult(requestCode, resultCode, data);
+        Log.w("requestcode","requestcode " + requestCode);
         switch (requestCode){
+
+
             case 0:
                 if (resultCode == CommonStatusCodes.SUCCESS){
                     if (data != null){
@@ -103,6 +111,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void postBarcode(String barcode) {
-        
+
     }
+
+
+    private int userId;
+    private void openLoginWindow() {
+
+    }
+
 }
