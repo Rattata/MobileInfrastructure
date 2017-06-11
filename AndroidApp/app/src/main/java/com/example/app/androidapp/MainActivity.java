@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void SpotifyLogin(View view) {
 
-//        if(userId == 0){return;}
         BackendService.AuthenticationRequest authrequest = BackendService.requestData;
         if (authrequest == null) {
             return;
@@ -86,9 +85,6 @@ public class MainActivity extends AppCompatActivity {
         final AuthenticationRequest request = new AuthenticationRequest.Builder(authrequest.client_id, AuthenticationResponse.Type.CODE, authrequest.redirect_uri)
                 .setScopes(new String[]{authrequest.scope})
                 .build();
-//        Intent loginintent = AuthenticationClient.createLoginActivityIntent(this,request);
-//        startActivity(loginintent);
-//        AuthenticationResponse response = AuthenticationClient.getResponse(1337,loginintent);
 
         AuthenticationClient.openLoginActivity(this, 1337, request);
 

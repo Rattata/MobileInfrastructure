@@ -6,9 +6,12 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Button;
+
 import com.spotify.sdk.android.authentication.*;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -37,6 +40,9 @@ public class ScanActivity extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
+
         setContentView(R.layout.scan_activity);
         cameraPreview = (SurfaceView) findViewById(R.id.camera_preview);
         createCameraSource();
@@ -49,6 +55,7 @@ public class ScanActivity extends Activity {
                 .setAutoFocusEnabled(true)
                 .setRequestedPreviewSize(1600, 1024)
                 .build();
+
 
         cameraPreview.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
@@ -89,13 +96,17 @@ public class ScanActivity extends Activity {
 
             @Override
             public void receiveDetections(Detector.Detections<Barcode> detections) {
+
                 final SparseArray<Barcode> barcodeSparseArray = detections.getDetectedItems();
+                Log.i("barcode", String.format("detections: %s", barcodeSparseArray.size()));
                 if (barcodeSparseArray.size() > 0){
                     Intent intent = new Intent();
                     intent.putExtra("barcode",barcodeSparseArray.valueAt(0));
                     setResult(CommonStatusCodes.SUCCESS, intent);
-
-                    finish();
+                    Button p1_button = (Button)findViewById(R.id.button_submitbarcode);
+                    p1_button.setText(String.format("submit: %s", barcodeSparseArray.valueAt(0).displayValue));
+                    p1_button.
+//                    //finish();
                 }
             }
         });

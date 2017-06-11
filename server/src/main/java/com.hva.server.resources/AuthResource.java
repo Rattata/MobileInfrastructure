@@ -55,7 +55,7 @@ public class AuthResource {
             _accountRepo.CreateOrUpdate(account);
             return Response.ok(gson.toJson(_spotify.SetTokens(account)), MediaType.APPLICATION_JSON).build();
         } catch (AccountCodeExpiredException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).link("/myapp/auth/request", "request").build();
+            return Response.status(Response.Status.UNAUTHORIZED).link("/auth/request", "request").build();
         } catch (Exception e) {
             Logger.getLogger(AuthResource.class.getCanonicalName()).severe(e.getMessage());
             e.printStackTrace();

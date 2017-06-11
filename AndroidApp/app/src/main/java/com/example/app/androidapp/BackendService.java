@@ -16,11 +16,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public class BackendService {
     public static final String API_URL = "http://192.168.0.100:8080";
     public static AuthenticationRequest requestData;
     public static Account account;
+    public static Retrofit retrofit;
+    public BackendService() {
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(API_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+    }
 
     public static class AuthenticationRequest {
 
@@ -72,16 +82,14 @@ public class BackendService {
 
         @GET("/auth/redirect")
         Call<Account> Redirect(String code, String state);
+
+        @GET("/album/")
+        Call<String> AlbumQuery(@Query("barcode") String barcode, @Query("userid") int userid);
     }
 
 
 
     public void AuthenticationService() throws IOException{
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
         Spoterfy github = retrofit.create(Spoterfy.class);
 
@@ -102,10 +110,6 @@ public class BackendService {
     }
 
     public void Redirect(String code, String state){
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
 
         Spoterfy github = retrofit.create(Spoterfy.class);
         Call<Account> call = github.Redirect(code,state);
@@ -119,6 +123,23 @@ public class BackendService {
 
             @Override
             public void onFailure(Call<Account> call, Throwable t) {
+                Log.e("BackendService", t.getMessage());
+            }
+        });
+    }
+
+    public void BarcodeQuery(String barcode, int userId){
+        Spoterfy github = retrofit.create(Spoterfy.class);
+        Call<String> album =  github.AlbumQuery(barcode, userId);
+        album.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                int statusCode = response.code();
+                Log.i("authrequest", response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
                 Log.e("BackendService", t.getMessage());
             }
         });
