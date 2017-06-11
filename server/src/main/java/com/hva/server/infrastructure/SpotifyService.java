@@ -7,6 +7,7 @@ package com.hva.server.infrastructure;
 
 import com.google.common.util.concurrent.SettableFuture;
 import com.google.gson.Gson;
+import com.hva.server.AuthResource;
 import com.hva.server.domain.Account;
 import com.hva.server.domain.AccountCodeExpiredException;
 import com.hva.server.domain.AccountRepository;
@@ -19,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
 import javax.inject.Inject;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
@@ -28,8 +31,9 @@ public class SpotifyService {
 
     private final String ClientId = "97b2e28c509d450ba4be16b6a02c048c";
     private final String ClientSecret = "e34f7b0c3e1d4bf0ae596d7007945e44";
-    private final String callBack = "http://localhost:8080/myapp/auth/redirect";
+    private final String callBack = "http://192.168.0.100:8080/auth/redirect";
 
+    @Context UriInfo uriInfo;
     private AccountRepository _accountRepo;
     private Api api;
     private Gson gson = new Gson();

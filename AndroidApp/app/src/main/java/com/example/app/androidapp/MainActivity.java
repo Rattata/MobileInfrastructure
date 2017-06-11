@@ -80,21 +80,24 @@ public class MainActivity extends AppCompatActivity {
 //        if(userId == 0){return;}
         BackendService.AuthenticationRequest authrequest = BackendService.requestData;
         if(authrequest == null){return;}
-        final AuthenticationRequest request = new AuthenticationRequest.Builder(authrequest.client_id, AuthenticationResponse.Type.TOKEN, authrequest.redirect_uri)
+        final AuthenticationRequest request = new AuthenticationRequest.Builder(authrequest.client_id, AuthenticationResponse.Type.CODE, authrequest.redirect_uri)
                 .setScopes(new String[]{authrequest.scope})
                 .build();
+//        Intent loginintent = AuthenticationClient.createLoginActivityIntent(this,request);
+//        startActivity(loginintent);
+//        AuthenticationResponse response = AuthenticationClient.getResponse(1337,loginintent);
 
         AuthenticationClient.openLoginActivity(this, 1337, request);
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //callbackManager.onActivityResult(requestCode, resultCode, data);
-        Log.w("requestcode","requestcode " + requestCode);
-        switch (requestCode){
+        if(requestCode != 1337)return;
+        AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
+        switch (response.getType()){
 
-
-            case 0:
+            case TOKEN:
                 if (resultCode == CommonStatusCodes.SUCCESS){
                     if (data != null){
                         Barcode barcode = data.getParcelableExtra("barcode");
@@ -105,6 +108,9 @@ public class MainActivity extends AppCompatActivity {
                         barcodeText.setText("No barcode found");
                     }
                 }
+                break;
+            case CODE:
+                service.Redirect(response.getCode(), response.getState());
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
