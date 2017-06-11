@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -26,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     TextView barcodeText;
     Button barcodeButton;
     Button button;
-//    CallbackManager callbackManager;
+    //    CallbackManager callbackManager;
     //LoginButton loginButton;
     BackendService service = new BackendService();
 
@@ -37,11 +38,11 @@ public class MainActivity extends AppCompatActivity {
         //sensor_manager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
         setContentView(R.layout.activity_main);
-        barcodeText = (TextView)findViewById(R.id.barcode_text);
-        barcodeButton = (Button)findViewById(R.id.barcode_button);
+        barcodeText = (TextView) findViewById(R.id.barcode_text);
+        barcodeButton = (Button) findViewById(R.id.barcode_button);
         try {
             service.AuthenticationService();
-        }catch (IOException except){
+        } catch (IOException except) {
             Log.e("authenticationrequest", "could not reach authenticationservice");
         }
 
@@ -70,16 +71,18 @@ public class MainActivity extends AppCompatActivity {
 //
     }
 
-    public void scanBarcodeClick(View view){
+    public void scanBarcodeClick(View view) {
         Intent intent = new Intent(this, ScanActivity.class);
-        startActivityForResult(intent,0);
+        startActivityForResult(intent, 0);
     }
 
-    public void SpotifyLogin(View view){
+    public void SpotifyLogin(View view) {
 
 //        if(userId == 0){return;}
         BackendService.AuthenticationRequest authrequest = BackendService.requestData;
-        if(authrequest == null){return;}
+        if (authrequest == null) {
+            return;
+        }
         final AuthenticationRequest request = new AuthenticationRequest.Builder(authrequest.client_id, AuthenticationResponse.Type.CODE, authrequest.redirect_uri)
                 .setScopes(new String[]{authrequest.scope})
                 .build();
@@ -93,25 +96,25 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode != 1337)return;
-        AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
-        switch (response.getType()){
+        if (requestCode == 1337) {
+            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, data);
+            switch (response.getType()) {
+                case CODE:
+                    service.Redirect(response.getCode(), response.getState());
+                    break;
+            }
 
-            case TOKEN:
-                if (resultCode == CommonStatusCodes.SUCCESS){
-                    if (data != null){
-                        Barcode barcode = data.getParcelableExtra("barcode");
-                        barcodeText.setText(barcode.displayValue);
-                        postBarcode(barcode.displayValue);
-                    }
-                    else{
-                        barcodeText.setText("No barcode found");
-                    }
+            //barcode result
+        } else if (requestCode == 0) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra("barcode");
+                    barcodeText.setText(barcode.displayValue);
+                    postBarcode(barcode.displayValue);
+                } else {
+                    barcodeText.setText("No barcode found");
                 }
-                break;
-            case CODE:
-                service.Redirect(response.getCode(), response.getState());
-                break;
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -122,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private int userId;
+
     private void openLoginWindow() {
 
     }
