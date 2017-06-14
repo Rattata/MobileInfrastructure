@@ -61,7 +61,6 @@ public class SpotifyService {
     }
 
     private Account GetAuthToken(Account account) throws Exception {
-
         if (account.refresh_token != null) {
             RefreshAccessTokenCredentials cred = api.refreshAccessToken().build().get();
             account.access_token = cred.getAccessToken();
@@ -69,8 +68,6 @@ public class SpotifyService {
         } else {
             AuthorizationCodeCredentials credentials = null;
             credentials = api.authorizationCodeGrant(account.code).build().get();
-            api.setAccessToken(credentials.getAccessToken());
-            api.setRefreshToken(credentials.getRefreshToken());
             account.access_token = credentials.getAccessToken();
             account.refresh_token = credentials.getRefreshToken();
             account.access_token_expires = GetExpiryDate(credentials.getExpiresIn());
@@ -92,9 +89,7 @@ public class SpotifyService {
     }
 
     public Account SetTokens(Account account) throws Exception {
-
-        api.setAccessToken(account.access_token);
-        api.setRefreshToken(account.refresh_token);
+     
         Account updatedAccount = account;
         if (account.code == null) {
             Logger.getLogger(SpotifyService.class.getCanonicalName()).severe("account has no code: " + account.email);
@@ -104,7 +99,9 @@ public class SpotifyService {
         if (account.access_token == null || account.access_token_expires == null || account.access_token_expires.before(now)) {
             updatedAccount = GetAuthToken(account);
         }
-
+        api.setAccessToken(updatedAccount.access_token);
+        api.setRefreshToken(updatedAccount.refresh_token);
+        
         return updatedAccount;
     }
 
