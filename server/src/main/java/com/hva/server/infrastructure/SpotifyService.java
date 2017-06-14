@@ -74,6 +74,9 @@ public class SpotifyService {
 
     public String queryAlbums(Account account, String barcode) throws AccountCodeExpiredException, Exception {
         Account updatedAccount  = SetTokens(account);
+//        System.out.println(api.searchAlbums(String.format("nicki", barcode)).limit(1).build().getJson());
+        System.out.println("\n");
+        System.out.println(api.searchAlbums(String.format("%s", barcode)).limit(1).build().getJson());
         return api.searchAlbums(barcode).limit(1).build().getJson();
     }
 

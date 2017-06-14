@@ -23,13 +23,12 @@ public class BackendService {
     public static AuthenticationRequest requestData;
     public static Account account;
     public static Retrofit retrofit;
-    public BackendService() {
 
+    public BackendService() {
         retrofit = new Retrofit.Builder()
                 .baseUrl(API_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
     }
 
     public static class AuthenticationRequest {
@@ -74,6 +73,11 @@ public class BackendService {
             this.state = state;
             this.ID = ID;
         }
+
+        @Override
+        public String toString() {
+            return String.format("code:%s%naccess_token:%s%nrefresh_token:%s%naccess_token_expires:%s%nemail:%s%nstate:%s%nID:%d%n", code,access_token,refresh_token,access_token_expires.toString(),email,state,ID);
+        }
     }
 
     public interface Spoterfy {
@@ -81,19 +85,18 @@ public class BackendService {
         Call<AuthenticationRequest> AuthenticationRequest();
 
         @GET("/auth/redirect")
-        Call<Account> Redirect(String code, String state);
+        Call<Account> Redirect(@Query("code") String code, @Query("state") String state);
 
         @GET("/album/")
         Call<String> AlbumQuery(@Query("barcode") String barcode, @Query("userid") int userid);
     }
 
 
-
     public void AuthenticationService() throws IOException{
 
-        Spoterfy github = retrofit.create(Spoterfy.class);
+        Spoterfy spotify = retrofit.create(Spoterfy.class);
 
-        Call<AuthenticationRequest> call = github.AuthenticationRequest();
+        Call<AuthenticationRequest> call = spotify.AuthenticationRequest();
         call.enqueue(new Callback<AuthenticationRequest>() {
             @Override
             public void onResponse(Call<AuthenticationRequest> call, Response<AuthenticationRequest> response) {
@@ -111,8 +114,8 @@ public class BackendService {
 
     public void Redirect(String code, String state){
 
-        Spoterfy github = retrofit.create(Spoterfy.class);
-        Call<Account> call = github.Redirect(code,state);
+        Spoterfy spotify = retrofit.create(Spoterfy.class);
+        Call<Account> call = spotify.Redirect(code,state);
         call.enqueue(new Callback<Account>() {
             @Override
             public void onResponse(Call<Account> call, Response<Account> response) {
@@ -128,9 +131,10 @@ public class BackendService {
         });
     }
 
-    public void BarcodeQuery(String barcode, int userId){
-        Spoterfy github = retrofit.create(Spoterfy.class);
-        Call<String> album =  github.AlbumQuery(barcode, userId);
+    public void BarcodeQuery(String barcode){
+        Spoterfy spotify = retrofit.create(Spoterfy.class);
+        Log.i("account", account.toString());
+        Call<String> album =  spotify.AlbumQuery(barcode, account.ID);
         album.enqueue(new Callback<String>() {
             @Override
             public void onResponse(Call<String> call, Response<String> response) {

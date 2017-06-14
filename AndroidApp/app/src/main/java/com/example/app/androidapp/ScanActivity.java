@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 public class ScanActivity extends Activity {
 
     SurfaceView cameraPreview;
+    BackendService service = new BackendService();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -103,10 +104,7 @@ public class ScanActivity extends Activity {
                     Intent intent = new Intent();
                     intent.putExtra("barcode",barcodeSparseArray.valueAt(0));
                     setResult(CommonStatusCodes.SUCCESS, intent);
-                    Button p1_button = (Button)findViewById(R.id.button_submitbarcode);
-                    p1_button.setText(String.format("submit: %s", barcodeSparseArray.valueAt(0).displayValue));
-                    p1_button.
-//                    //finish();
+                    service.BarcodeQuery(barcodeSparseArray.valueAt(0).displayValue);
                 }
             }
         });
