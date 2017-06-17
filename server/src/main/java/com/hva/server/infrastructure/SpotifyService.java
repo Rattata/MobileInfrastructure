@@ -30,9 +30,9 @@ import javax.ws.rs.core.UriInfo;
  */
 public class SpotifyService {
 
-    private final String ClientId = "97b2e28c509d450ba4be16b6a02c048c";
-    private final String ClientSecret = "e34f7b0c3e1d4bf0ae596d7007945e44";
-    private final String callBack = "http://192.168.0.100:8080/auth/redirect";
+    private final String ClientId = "a1af33735cdd4190bea4d17a907e9a56";
+    private final String ClientSecret = "16398191f8bd4d7ab9580e53078e601d";
+    private final String callBack = "http://192.168.0.19:8080/auth/redirect";
 
     @Context
     UriInfo uriInfo;

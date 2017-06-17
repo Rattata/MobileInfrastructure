@@ -5,6 +5,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Ryno on 31-5-2017.
@@ -12,15 +14,9 @@ import retrofit2.http.POST;
 
 public interface ConnectionApi {
 
-    /*@GET("https://accounts.spotify.com/authorize/?client_id=97b2e28c509d450ba4be16b6a02c048c&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8080%2Fmyapp%2Fspotifycallback&scope=user-read-private%20user-read-email&state=34fFs29kd09")
-    Call<List<String>> listData();*/
+    /*@GET("/database/search?barcode=8809314510364&key=KeCqVCAcXfxOMuIeTUfD&secret=RywjgidAXnzfKNUDuXeIVPUMtKxJoJQj")
+    Call<String> BarcodeToAlbumName();*/
 
-    @POST("http://localhost:8080/myapp/auth/redirect")
-    void sendRequest();
-
-    @POST()
-    void sendAccessToken();
-
-    @POST()
-    void sendBarcode();
+    @GET("database/search?")
+    Call<DiscogsResults> BarcodeToAlbumName(@Query("barcode") String barcode, @Query("key") String key,@Query("secret") String secret);
 }

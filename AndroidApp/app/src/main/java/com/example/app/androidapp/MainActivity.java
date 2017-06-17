@@ -14,11 +14,15 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
 
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -27,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     TextView barcodeText;
     Button barcodeButton;
     Button button;
+    private Retrofit retrofit;
     //    CallbackManager callbackManager;
     //LoginButton loginButton;
     BackendService service = new BackendService();
@@ -68,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
 //                        //barcodeText.setText(exception.getMessage());
 //                    }
 //                });
-//
+
+        retrofit = new Retrofit.Builder()
+                .baseUrl(ScanActivity.DISCOGS_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     public void scanBarcodeClick(View view) {
@@ -107,6 +116,31 @@ public class MainActivity extends AppCompatActivity {
                     Barcode barcode = data.getParcelableExtra("barcode");
                     barcodeText.setText(barcode.displayValue);
                     postBarcode(barcode.displayValue);
+                    ConnectionApi connectionApi = retrofit.create(ConnectionApi.class);
+                    //final DiscogsRequest discogsRequest = new DiscogsRequest();
+                    Call<DiscogsResults> leBarcode = connectionApi.BarcodeToAlbumName(barcode.rawValue, ScanActivity.DISCOGS_KEY, ScanActivity.DISCOGS_SECRET);
+                    leBarcode.enqueue(new Callback<DiscogsResults>() {
+                        @Override
+                        public void onResponse(Call<DiscogsResults> call, Response<DiscogsResults> response) {
+
+                            //Log.i("Meep", response.body().getTitle());
+
+
+                            Log.i("Meep", response.body().getPagination().toString());
+
+                            Log.i("BarcodetoAlbum su6: ",String.valueOf(response.isSuccessful()));
+                            Log.i("Barcode to Album code: ",String.valueOf(response.code()));
+                            Log.i("BarcodeAlbum message : ",response.message());
+                            Log.i("Barcode to Album", response.body().toString());
+                        }
+
+                        @Override
+                        public void onFailure(Call<DiscogsResults> call, Throwable t) {
+                            Log.i("Failed","Failed");
+                            Log.i("Failed",t.toString());
+                            Log.i("Failed",t.getMessage());
+                        }
+                    });
                 } else {
                     barcodeText.setText("No barcode found");
                 }
@@ -125,5 +159,4 @@ public class MainActivity extends AppCompatActivity {
     private void openLoginWindow() {
 
     }
-
 }

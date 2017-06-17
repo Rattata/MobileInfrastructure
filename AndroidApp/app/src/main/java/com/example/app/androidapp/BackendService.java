@@ -19,7 +19,7 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public class BackendService {
-    public static final String API_URL = "http://192.168.0.100:8080";
+    public static final String API_URL = "http://192.168.0.19:8080";
     public static AuthenticationRequest requestData;
     public static Account account;
     public static Retrofit retrofit;

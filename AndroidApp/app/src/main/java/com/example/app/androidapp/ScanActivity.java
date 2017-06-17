@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.spotify.sdk.android.authentication.*;
 import retrofit2.Call;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 import retrofit2.http.*;
@@ -26,6 +27,7 @@ import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.logging.Logger;
 
 /**
@@ -34,15 +36,22 @@ import java.util.logging.Logger;
 
 public class ScanActivity extends Activity {
 
-    SurfaceView cameraPreview;
-    BackendService service = new BackendService();
+    public final static String DISCOGS_URL = "https://api.discogs.com/";
+    public final static String DISCOGS_KEY = "KeCqVCAcXfxOMuIeTUfD";
+    public final static String DISCOGS_SECRET = "RywjgidAXnzfKNUDuXeIVPUMtKxJoJQj";
+
+    private Retrofit retrofit;
+    private SurfaceView cameraPreview;
+    private BackendService service = new BackendService();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
+        retrofit = new Retrofit.Builder()
+                .baseUrl(DISCOGS_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
 
         setContentView(R.layout.scan_activity);
         cameraPreview = (SurfaceView) findViewById(R.id.camera_preview);
@@ -104,7 +113,8 @@ public class ScanActivity extends Activity {
                     Intent intent = new Intent();
                     intent.putExtra("barcode",barcodeSparseArray.valueAt(0));
                     setResult(CommonStatusCodes.SUCCESS, intent);
-                    service.BarcodeQuery(barcodeSparseArray.valueAt(0).displayValue);
+                    finish();
+                    //service.BarcodeQuery(barcodeSparseArray.valueAt(0).displayValue);
                 }
             }
         });
