@@ -54,7 +54,12 @@ public class AlbumResource {
     public Response AlbumArtistQuery(@PathParam("artist") String artist, @PathParam("album") String album, @QueryParam("userid") int userid) {
         try {
             Account account = _accountRepo.Get(userid);
-            return Response.ok(gson.toJson(_spotify.GetSpotifyUrl(account,artist,album)), MediaType.APPLICATION_JSON).build();
+            String returnUrl = _spotify.GetSpotifyUrl(account,artist,album);
+            if(returnUrl.equals("no result")){
+                return Response.status(404).build();
+            } else {
+                return Response.ok(returnUrl, MediaType.TEXT_PLAIN).build();
+            }
         } catch (Exception e) {
             Logger.getLogger(AlbumResource.class.getCanonicalName()).severe(e.getMessage());
             e.printStackTrace();
