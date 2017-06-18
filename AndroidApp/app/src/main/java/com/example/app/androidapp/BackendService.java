@@ -89,6 +89,10 @@ public class BackendService {
 
         @GET("/album/")
         Call<String> AlbumQuery(@Query("barcode") String barcode, @Query("userid") int userid);
+
+
+        @GET("/album/artist/{artist}/album/{album}")
+        Call<String> AlbumArtistQuery(@Path("artist") String artist, @Path("album") String album, @Query("userid") int userid);
     }
 
 
@@ -148,4 +152,23 @@ public class BackendService {
             }
         });
     }
+
+    public void AlbumArtistQuery(String albumTitle, String artistTitle, int userId){
+        Spoterfy spotify = retrofit.create(Spoterfy.class);
+        Log.i("account", account.toString());
+        Call<String> album =  spotify.AlbumArtistQuery(artistTitle, albumTitle, account.ID);
+        album.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Log.i("authrequest", response.body().toString());
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Log.e("BackendService", t.getMessage());
+            }
+        });
+    }
+
+
 }

@@ -51,29 +51,6 @@ public class MainActivity extends AppCompatActivity {
             Log.e("authenticationrequest", "could not reach authenticationservice");
         }
 
-        //FacebookSdk.sdkInitialize(getApplicationContext());
-        //callbackManager = CallbackManager.Factory.create();
-//        loginButton = (LoginButton) findViewById(R.id.login_button);
-//
-//        LoginManager.getInstance().registerCallback(callbackManager,
-//                new FacebookCallback<LoginResult>() {
-//                    @Override
-//                    public void onSuccess(LoginResult loginResult) {
-//                        Log.d("Debug", "login success");
-//                        barcodeText.setText("Login succes\n"+loginResult.getAccessToken().getToken());
-//                    }
-//
-//                    @Override
-//                    public void onCancel() {
-//                        //barcodeText.setText("Login cancel");
-//                    }
-//
-//                    @Override
-//                    public void onError(FacebookException exception) {
-//                        //barcodeText.setText(exception.getMessage());
-//                    }
-//                });
-
         retrofit = new Retrofit.Builder()
                 .baseUrl(ScanActivity.DISCOGS_URL)
                 .addConverterFactory(GsonConverterFactory.create())

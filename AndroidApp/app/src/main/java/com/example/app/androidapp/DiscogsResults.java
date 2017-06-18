@@ -29,8 +29,8 @@ public class DiscogsResults {
     public List<ReleaseResult> results;
 
     public class ReleaseResult{
-        //public String barcode;
-        public String title;
-        //public String resource_url;
+        String title;
+        String id;
+        String type;
     }
 }

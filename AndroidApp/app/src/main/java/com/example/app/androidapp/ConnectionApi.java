@@ -19,4 +19,16 @@ public interface ConnectionApi {
 
     @GET("database/search?")
     Call<DiscogsResults> BarcodeToAlbumName(@Query("barcode") String barcode, @Query("key") String key,@Query("secret") String secret);
+
+    @GET("database/{release}/{id}")
+    Call<DiscogsAlbumResult> GetRelease(@Query("release") String releaseType, @Query("id") String id , @Query("key") String key, @Query("secret") String secret) ;
+
+    class DiscogsAlbumResult {
+        public List<Artist> artists;
+        public String title;
+    }
+
+    class Artist {
+        public String name;
+    }
 }
