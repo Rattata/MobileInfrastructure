@@ -25,4 +25,12 @@ public class DiscogsResults {
     public void setPagination(JSONObject pagination) {
         this.pagination = pagination;
     }
+
+    public List<ReleaseResult> results;
+
+    public class ReleaseResult{
+        //public String barcode;
+        public String title;
+        //public String resource_url;
+    }
 }
