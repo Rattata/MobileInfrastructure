@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     Barcode barcode = data.getParcelableExtra("barcode");
                     barcodeText.setText(barcode.displayValue);
                     postBarcode(barcode.displayValue);
-                    ConnectionApi connectionApi = retrofit.create(ConnectionApi.class);
+                    final ConnectionApi connectionApi = retrofit.create(ConnectionApi.class);
                     //final DiscogsRequest discogsRequest = new DiscogsRequest();
                     Call<DiscogsResults> leBarcode = connectionApi.BarcodeToAlbumName(barcode.rawValue, ScanActivity.DISCOGS_KEY, ScanActivity.DISCOGS_SECRET);
                     leBarcode.enqueue(new Callback<DiscogsResults>() {
@@ -105,19 +105,62 @@ public class MainActivity extends AppCompatActivity {
 
                             Log.i("Meep", response.body().getPagination().toString());
                             Log.i("Meep", response.body().results.get(0).title);
-                            service.BarcodeQuery(response.body().results.get(0).title);
+                            DiscogsResults result = response.body();
+                            if (result.results.size() < 1) {
+                                Log.i("Meep", "no discogs result found");
+                            } else {
+                                DiscogsResults.ReleaseResult release = result.results.get(0);
+                                Call<ConnectionApi.DiscogsAlbumResult> albumResultCall = connectionApi.GetRelease(release.type, release.id, ScanActivity.DISCOGS_KEY, ScanActivity.DISCOGS_SECRET);
+                                //Get specific album from Discogs, so we get the album and the artist
+                                albumResultCall.enqueue(new Callback<ConnectionApi.DiscogsAlbumResult>() {
 
-                            Log.i("BarcodetoAlbum su6: ",String.valueOf(response.isSuccessful()));
-                            Log.i("Barcode to Album code: ",String.valueOf(response.code()));
-                            Log.i("BarcodeAlbum message : ",response.message());
+                                    @Override
+                                    public void onResponse(Call<ConnectionApi.DiscogsAlbumResult> call, Response<ConnectionApi.DiscogsAlbumResult> response) {
+                                        ConnectionApi.DiscogsAlbumResult albumResult = response.body();
+                                        Retrofit backend = BackendService.retrofit;
+                                        BackendService.Spoterfy spotify = backend.create(BackendService.Spoterfy.class);
+
+                                        //Create new spotify call
+                                        Call<String> spotifyCall =  spotify.AlbumArtistQuery(albumResult.title, albumResult.artists.get(0).name, BackendService.account.ID);
+                                        spotifyCall.enqueue(new Callback<String>(){
+                                            @Override
+                                            public void onResponse(Call<String> call, Response<String> response) {
+                                                //redirect user to spotify app via browser
+                                                String spotifyAlbumUri = response.body();
+
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<String> call, Throwable t) {
+                                                //Couldn't find album in spotify
+                                                Log.e("BackendService", "couldn't reach resource or find album in spotify");
+                                            }
+                                        });
+
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ConnectionApi.DiscogsAlbumResult> call, Throwable t) {
+                                        Log.i("Failed", "Discogs release couldn't be found");
+                                    }
+                                });
+
+
+                            }
+
+
+                            Log.i("BarcodetoAlbum su6: ", String.valueOf(response.isSuccessful()));
+                            Log.i("Barcode to Album code: ", String.valueOf(response.code()));
+                            Log.i("BarcodeAlbum message : ", response.message());
                             Log.i("Barcode to Album", response.body().toString());
                         }
 
                         @Override
                         public void onFailure(Call<DiscogsResults> call, Throwable t) {
-                            Log.i("Failed","Failed");
-                            Log.i("Failed",t.toString());
-                            Log.i("Failed",t.getMessage());
+                            Log.i("Failed", "Failed");
+                            Log.i("Failed", t.toString());
+                            Log.i("Failed", t.getMessage());
                         }
                     });
                 } else {

@@ -153,7 +153,7 @@ public class BackendService {
         });
     }
 
-    public void AlbumArtistQuery(String albumTitle, String artistTitle, int userId){
+    public void AlbumArtistQuery(String albumTitle, String artistTitle){
         Spoterfy spotify = retrofit.create(Spoterfy.class);
         Log.i("account", account.toString());
         Call<String> album =  spotify.AlbumArtistQuery(artistTitle, albumTitle, account.ID);
