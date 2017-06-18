@@ -6,14 +6,18 @@ package com.example.app.androidapp;
 
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -87,7 +91,7 @@ public class BackendService {
         @GET("/auth/redirect")
         Call<Account> Redirect(@Query("code") String code, @Query("state") String state);
 
-        @GET("/album/")
+        @GET("/album/barcode/")
         Call<String> AlbumQuery(@Query("barcode") String barcode, @Query("userid") int userid);
 
 
@@ -144,6 +148,18 @@ public class BackendService {
             public void onResponse(Call<String> call, Response<String> response) {
                 int statusCode = response.code();
                 Log.i("authrequest", response.body().toString());
+                try {
+                    JSONArray jsonArray = new JSONArray();
+                    JSONObject jsonObject = new JSONObject(response.body().toString());
+                    jsonArray = jsonObject.toJSONArray(jsonObject.names());
+                    JSONArray jsonArray2 = jsonArray.getJSONObject(0).getJSONArray("items");
+                    JSONObject jsonObject2 = new JSONObject();
+                    jsonObject2 = jsonArray2.getJSONObject(0);
+                    Log.i("Got Uri:  ",jsonObject2.get("uri").toString());
+                    MainActivity.ALBUM_URI = jsonObject2.get("uri").toString();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

@@ -1,7 +1,9 @@
 package com.example.app.androidapp;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -14,11 +16,7 @@ import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.util.List;
-import java.util.logging.Logger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,23 +26,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
-    TextView barcodeText;
-    Button barcodeButton;
-    Button button;
-    private Retrofit retrofit;
-    //    CallbackManager callbackManager;
-    //LoginButton loginButton;
-    BackendService service = new BackendService();
+    public static String ALBUM_URI;
 
-    //private SensorManager sensor_manager;
+    private TextView barcodeText;
+    private Button barcodeButton;
+    private Retrofit retrofit;
+    private BackendService service = new BackendService();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //sensor_manager = (SensorManager) getSystemService(SENSOR_SERVICE);
-
         setContentView(R.layout.activity_main);
+
         barcodeText = (TextView) findViewById(R.id.barcode_text);
         barcodeButton = (Button) findViewById(R.id.barcode_button);
+
         try {
             service.AuthenticationService();
         } catch (IOException except) {
@@ -63,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void SpotifyLogin(View view) {
-
         BackendService.AuthenticationRequest authrequest = BackendService.requestData;
         if (authrequest == null) {
             return;
@@ -92,68 +87,31 @@ public class MainActivity extends AppCompatActivity {
                 if (data != null) {
                     Barcode barcode = data.getParcelableExtra("barcode");
                     barcodeText.setText(barcode.displayValue);
-                    postBarcode(barcode.displayValue);
                     final ConnectionApi connectionApi = retrofit.create(ConnectionApi.class);
-                    //final DiscogsRequest discogsRequest = new DiscogsRequest();
                     Call<DiscogsResults> leBarcode = connectionApi.BarcodeToAlbumName(barcode.rawValue, ScanActivity.DISCOGS_KEY, ScanActivity.DISCOGS_SECRET);
                     leBarcode.enqueue(new Callback<DiscogsResults>() {
                         @Override
                         public void onResponse(Call<DiscogsResults> call, Response<DiscogsResults> response) {
-
-                            //Log.i("Meep", response.body().getTitle());
-
-
-                            Log.i("Meep", response.body().getPagination().toString());
-                            Log.i("Meep", response.body().results.get(0).title);
+                            Log.i("Title: ", response.body().results.get(0).title);
                             DiscogsResults result = response.body();
                             if (result.results.size() < 1) {
-                                Log.i("Meep", "no discogs result found");
+                                Log.i("Results: ", "no discogs result found");
                             } else {
-                                DiscogsResults.ReleaseResult release = result.results.get(0);
-                                Call<ConnectionApi.DiscogsAlbumResult> albumResultCall = connectionApi.GetRelease(release.type, release.id, ScanActivity.DISCOGS_KEY, ScanActivity.DISCOGS_SECRET);
-                                //Get specific album from Discogs, so we get the album and the artist
-                                albumResultCall.enqueue(new Callback<ConnectionApi.DiscogsAlbumResult>() {
+                                service.BarcodeQuery(response.body().results.get(0).title);
 
-                                    @Override
-                                    public void onResponse(Call<ConnectionApi.DiscogsAlbumResult> call, Response<ConnectionApi.DiscogsAlbumResult> response) {
-                                        ConnectionApi.DiscogsAlbumResult albumResult = response.body();
-                                        Retrofit backend = BackendService.retrofit;
-                                        BackendService.Spoterfy spotify = backend.create(BackendService.Spoterfy.class);
-
-                                        //Create new spotify call
-                                        Call<String> spotifyCall =  spotify.AlbumArtistQuery(albumResult.title, albumResult.artists.get(0).name, BackendService.account.ID);
-                                        spotifyCall.enqueue(new Callback<String>(){
-                                            @Override
-                                            public void onResponse(Call<String> call, Response<String> response) {
-                                                //redirect user to spotify app via browser
-                                                String spotifyAlbumUri = response.body();
-
-                                            }
-
-                                            @Override
-                                            public void onFailure(Call<String> call, Throwable t) {
-                                                //Couldn't find album in spotify
-                                                Log.e("BackendService", "couldn't reach resource or find album in spotify");
-                                            }
-                                        });
-
-
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    public void run() {
+                                        if(ALBUM_URI != null){
+                                            Log.i("URI: ", ALBUM_URI);
+                                            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(ALBUM_URI));
+                                            startActivity(browserIntent);
+                                        }
                                     }
-
-                                    @Override
-                                    public void onFailure(Call<ConnectionApi.DiscogsAlbumResult> call, Throwable t) {
-                                        Log.i("Failed", "Discogs release couldn't be found");
-                                    }
-                                });
-
-
+                                }, 3000);
                             }
-
-
-                            Log.i("BarcodetoAlbum su6: ", String.valueOf(response.isSuccessful()));
                             Log.i("Barcode to Album code: ", String.valueOf(response.code()));
                             Log.i("BarcodeAlbum message : ", response.message());
-                            Log.i("Barcode to Album", response.body().toString());
                         }
 
                         @Override
@@ -169,16 +127,5 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void postBarcode(String barcode) {
-
-    }
-
-
-    private int userId;
-
-    private void openLoginWindow() {
-
     }
 }

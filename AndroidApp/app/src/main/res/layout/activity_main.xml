@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="scanBarcodeClick"
-        android:text="Button" />
+        android:text="Scanner" />
 
     <TextView
         android:id="@+id/barcode_text"
@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="SpotifyLogin"
-        android:text="String"
+        android:text="Spotify Login"
         tools:text="Button" />
 
 

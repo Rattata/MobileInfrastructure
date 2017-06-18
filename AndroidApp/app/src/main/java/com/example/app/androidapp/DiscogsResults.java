@@ -33,4 +33,14 @@ public class DiscogsResults {
         String id;
         String type;
     }
+
+    public List<DiscogsAlbums> albums;
+
+    public class DiscogsAlbums{
+        List<items> items;
+    }
+
+    public class items{
+        String album_type;
+    }
 }

@@ -58,7 +58,6 @@ public class ScanActivity extends Activity {
         createCameraSource();
     }
 
-
     private void createCameraSource() {
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this).build();
         final CameraSource cameraSource = new CameraSource.Builder(this, barcodeDetector)

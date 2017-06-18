@@ -14,9 +14,6 @@ import retrofit2.http.Query;
 
 public interface ConnectionApi {
 
-    /*@GET("/database/search?barcode=8809314510364&key=KeCqVCAcXfxOMuIeTUfD&secret=RywjgidAXnzfKNUDuXeIVPUMtKxJoJQj")
-    Call<String> BarcodeToAlbumName();*/
-
     @GET("database/search?")
     Call<DiscogsResults> BarcodeToAlbumName(@Query("barcode") String barcode, @Query("key") String key,@Query("secret") String secret);
 
