@@ -50,7 +50,7 @@ public class AlbumResource {
     
     @GET()
     @Path("artist/{artist}/album/{album}")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
     public Response AlbumArtistQuery(@PathParam("artist") String artist, @PathParam("album") String album, @QueryParam("userid") int userid) {
         try {
             Account account = _accountRepo.Get(userid);
