@@ -16,7 +16,9 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.Dao;
 import com.wrapper.spotify.Api;
 import com.wrapper.spotify.models.AuthorizationCodeCredentials;
+import com.wrapper.spotify.models.Page;
 import com.wrapper.spotify.models.RefreshAccessTokenCredentials;
+import com.wrapper.spotify.models.SimpleAlbum;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.logging.Logger;
@@ -84,6 +86,13 @@ public class SpotifyService {
         return api.searchAlbums(barcode).limit(1).build().getJson();
     }
 
+    public String GetSpotifyUrl(Account account, String artist, String album) throws AccountCodeExpiredException, Exception {
+        SetTokens(account);
+        Page<SimpleAlbum> albumPage = api.searchAlbums(String.format("artist:\"%s\"album:\"%s\"", artist, album)).limit(1).build().get();
+        if(albumPage.getTotal() < 1){return "no results";}
+        return albumPage.getItems().get(0).getExternalUrls().get("spotify");
+    }
+    
     public String addAlbumsToUser(Account account, String barcode) {
         return "";
     }

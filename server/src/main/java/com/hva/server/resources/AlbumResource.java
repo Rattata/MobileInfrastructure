@@ -33,12 +33,28 @@ public class AlbumResource {
     SpotifyService _spotify;
     private Gson gson = new Gson();
 
-    @GET
+    @GET()
+    @Path("barcode")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response authcode(@QueryParam("barcode") String barcode, @QueryParam("userid") int userid) {
+    public Response BarcodeQuery(@QueryParam("barcode") String barcode, @QueryParam("userid") int userid) {
         try {
             Account account = _accountRepo.Get(userid);
             return Response.ok(gson.toJson(_spotify.queryAlbums(account, barcode)), MediaType.APPLICATION_JSON).build();
+        } catch (Exception e) {
+            Logger.getLogger(AlbumResource.class.getCanonicalName()).severe(e.getMessage());
+            e.printStackTrace();
+        }
+        return Response.serverError().build();
+    }
+    
+    
+    @GET()
+    @Path("artist/{artist}/album/{album}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response AlbumArtistQuery(@PathParam("artist") String artist, @PathParam("album") String album, @QueryParam("userid") int userid) {
+        try {
+            Account account = _accountRepo.Get(userid);
+            return Response.ok(gson.toJson(_spotify.GetSpotifyUrl(account,artist,album)), MediaType.APPLICATION_JSON).build();
         } catch (Exception e) {
             Logger.getLogger(AlbumResource.class.getCanonicalName()).severe(e.getMessage());
             e.printStackTrace();
