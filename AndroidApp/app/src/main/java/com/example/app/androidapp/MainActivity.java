@@ -127,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                             Log.i("Meep", response.body().getPagination().toString());
+                            Log.i("Meep", response.body().results.get(0).title);
+                            service.BarcodeQuery(response.body().results.get(0).title);
 
                             Log.i("BarcodetoAlbum su6: ",String.valueOf(response.isSuccessful()));
                             Log.i("Barcode to Album code: ",String.valueOf(response.code()));
